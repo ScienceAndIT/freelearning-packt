@@ -1,3 +1,5 @@
 # freelearning-packt
-Grab your free e-book from Packt's "Free-learning" program
-Here's a version written in JavaScript: https://github.com/draconar/grab_packt/blob/master/server.js
+Grab your free e-book from Packt's "Free-learning" program.<br/>
+Here's a version written in JavaScript: https://github.com/draconar/grab_packt/blob/master/server.js<br/>
+This repo contains my version written in Python for Django + Celery.<br/>
+There is also PHP version in another folder created by my colleague.
