@@ -32,6 +32,8 @@ def task_grab_free_ebook():
         p = s.post(FREE_LEARNING_URL, data=params)
         # An authorised request.
         r = s.get(PACKT_URL + book_number[0])
+        # Log out
+        l = s.get(PACKT_URL + '/logout')
 
 
 @periodic_task(run_every=(crontab(minute='*/1')),
