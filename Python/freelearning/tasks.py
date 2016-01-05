@@ -10,16 +10,7 @@ from celery.utils.log import get_task_logger
 
 
 logger = get_task_logger(__name__)
-params = {'email': 'youremail',
-          'password': 'yourpassword',
-          'op': 'Login',
-          'form_id': 'packt_user_login_form'}
-FREE_LEARNING_URL = 'https://www.packtpub.com/packt/offers/free-learning'
-PACKT_URL = 'https://www.packtpub.com'
-page = requests.get(FREE_LEARNING_URL)
-webpage = html.fromstring(page.content)
-book_number = webpage.xpath("//a[@class='twelve-days-claim']/@href")
-book_title = webpage.xpath("//div[@class='dotd-title']/h2/text()")
+
 
 
 @periodic_task(run_every=(crontab(minute=0, hour=8)),
@@ -27,6 +18,16 @@ book_title = webpage.xpath("//div[@class='dotd-title']/h2/text()")
                ignore_result=True
                )
 def task_grab_free_ebook():
+    params = {'email': 'youremail',
+          'password': 'yourpassword',
+          'op': 'Login',
+          'form_id': 'packt_user_login_form'}
+	FREE_LEARNING_URL = 'https://www.packtpub.com/packt/offers/free-learning'
+	PACKT_URL = 'https://www.packtpub.com'
+	page = requests.get(FREE_LEARNING_URL)
+	webpage = html.fromstring(page.content)
+	book_number = webpage.xpath("//a[@class='twelve-days-claim']/@href")
+
     # Use 'with' to ensure the session context is closed after use.
     with requests.Session() as s:
         p = s.post(FREE_LEARNING_URL, data=params)
@@ -41,6 +42,10 @@ def task_grab_free_ebook():
                ignore_result=True
                )
 def task_send_email_about_ebook():
+    FREE_LEARNING_URL = 'https://www.packtpub.com/packt/offers/free-learning'
+    page = requests.get(FREE_LEARNING_URL)
+    webpage = html.fromstring(page.content)
+    book_title = webpage.xpath("//div[@class='dotd-title']/h2/text()")
     subject = 'Your free e-book from PacktPub has just arrived'
     message = "Your new e-book is - " + book_title[0].strip()
     email = EmailMessage(subject,
