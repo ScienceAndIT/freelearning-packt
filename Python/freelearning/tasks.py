@@ -1,18 +1,12 @@
 from __future__ import absolute_import
 import requests
 from lxml import html
-#from random import randint
 from django.core.mail import EmailMessage
-#from celery import shared_task
 from celery.schedules import crontab
 from celery.task import periodic_task
-from celery.utils.log import get_task_logger
 
 
-logger = get_task_logger(__name__)
-
-
-
+# Grab your book at 8.00 AM
 @periodic_task(run_every=(crontab(minute=0, hour=8)),
                name='task_grab_free_ebook',
                ignore_result=True
@@ -37,7 +31,8 @@ def task_grab_free_ebook():
         l = s.get(PACKT_URL + '/logout')
 
 
-@periodic_task(run_every=(crontab(minute='*/1')),
+# Send e-mail at 8.02 AM
+@periodic_task(run_every=(crontab(minute=2, hour=8)),
                name='task_send_email_about_ebook',
                ignore_result=True
                )
@@ -56,6 +51,14 @@ def task_send_email_about_ebook():
     email.send(fail_silently=True)
 
 """
+# Below is a code used in the introductory examples
+from random import randint
+from celery import shared_task
+from celery.utils.log import get_task_logger
+
+logger = get_task_logger(__name__)
+
+
 @shared_task
 def add(x, y):
     return x + y
