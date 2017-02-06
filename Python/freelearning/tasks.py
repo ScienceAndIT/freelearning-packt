@@ -12,23 +12,24 @@ from celery.task import periodic_task
                ignore_result=True
                )
 def task_grab_free_ebook():
+    headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/53: 7.36(KHTML, like Gecko) Chrome / 49.0c.2623c.75c Safari / 537.36'}
     params = {'email': 'youremail',
           'password': 'yourpassword',
           'op': 'Login',
           'form_id': 'packt_user_login_form'}
 	FREE_LEARNING_URL = 'https://www.packtpub.com/packt/offers/free-learning'
 	PACKT_URL = 'https://www.packtpub.com'
-	page = requests.get(FREE_LEARNING_URL)
+	page = requests.get(FREE_LEARNING_URL, headers=headers)
 	webpage = html.fromstring(page.content)
 	book_number = webpage.xpath("//a[@class='twelve-days-claim']/@href")
 
     # Use 'with' to ensure the session context is closed after use.
     with requests.Session() as s:
-        p = s.post(FREE_LEARNING_URL, data=params)
+        p = s.post(FREE_LEARNING_URL, data=params, headers=headers)
         # An authorised request.
-        r = s.get(PACKT_URL + book_number[0])
+        r = s.get(PACKT_URL + book_number[0], headers=headers)
         # Log out
-        l = s.get(PACKT_URL + '/logout')
+        l = s.get(PACKT_URL + '/logout', headers=headers)
 
 
 # Send e-mail at 8.02 AM
@@ -37,8 +38,9 @@ def task_grab_free_ebook():
                ignore_result=True
                )
 def task_send_email_about_ebook():
+    headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/53: 7.36(KHTML, like Gecko) Chrome / 49.0c.2623c.75c Safari / 537.36'}
     FREE_LEARNING_URL = 'https://www.packtpub.com/packt/offers/free-learning'
-    page = requests.get(FREE_LEARNING_URL)
+    page = requests.get(FREE_LEARNING_URL, headers=headers)
     webpage = html.fromstring(page.content)
     book_title = webpage.xpath("//div[@class='dotd-title']/h2/text()")
     subject = 'Your free e-book from PacktPub has just arrived'
